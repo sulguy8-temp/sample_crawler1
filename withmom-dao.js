@@ -3,27 +3,22 @@ const dbInfo = require('./db-info.js');
 
 
 const pool = mariadb.createPool(dbInfo);
-const insertSql = "INSERT INTO CATEGORY_INFO(CAI_TYPE,CAI_DEP1 credat, cretim, creusr, moddat, modtim, modusr)";
-insertSql += " VALUES(";
-insertSql += " 1,?";
-insertSql += " DATE_FORMAT(NOW(),'%Y%m%d'),		DATE_FORMAT(NOW(),'%H%i%S'),1,";
-insertSql += " DATE_FORMAT(NOW(),'%Y%m%d'),		DATE_FORMAT(NOW(),'%H%i%S'),1";
-insertSql += " )";
+const insertCategoriInfoSql = "INSERT INTO CATEGORY_INFO(CAI_TYPE,CAI_DEP1) VALUES(1,?)";
 const deleteSql = "DELETE FROM crawling_info WHERE DATE_FORMAT(credat,'%Y-%m-%d') != DATE(now())";
 
 
 
-async function insertCrawlingInfo(params) {
+async function insertCategoriInfo(params) {
   let con;
   try {
     con = await pool.getConnection();
-    const result = await con.query(insertSql, params);
+    const result = await con.query(insertCategoriInfoSql, params);
     con.commit();
     return result;
   } catch (err) {
     throw err;
   } finally {
-    if (con) con.release(); //release to pool
+    if (con) con.release();
   }
 }
 async function deleteCrawlingInfo() {
@@ -36,7 +31,7 @@ async function deleteCrawlingInfo() {
   } catch (err) {
     throw err;
   } finally {
-    if (con) con.release(); //release to pool
+    if (con) con.release(); 
   }
 }
 async function selectShopInfo() {
@@ -51,7 +46,7 @@ async function selectShopInfo() {
   } catch (err) {
     throw err;
   } finally {
-    if (conn) conn.end();
+    if (conn) conn.release();
   }
   return list;
 }

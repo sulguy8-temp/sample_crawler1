@@ -1,5 +1,5 @@
 let Crawler = require("crawler");
-let dao = require('./crawling-dao.js');
+let dao = require('./withmom-dao.js');
 var cron = require('node-cron');
 
 let count = -1;
@@ -21,9 +21,7 @@ let c = new Crawler({
                 let url = menu.attr('href');
                 if(!category || !url.includes('http')) continue;
                 console.log(i + ':' + category + ':' + url);
-                if(i==2){
-                    menuQue.queue({url:url,category:category});
-                }
+                menuQue.queue({url:url,category:category});
             }
         }
         done();
@@ -46,18 +44,18 @@ let menuQue = new Crawler({
                 let itemTitle = itemContents[0].data.trim();
                 let itemDesc = row.find('div.item-name>a>div.item-text').text().trim();
                 let itemCost = row.find('div.item-price>strike').text().trim();
-                let itemPrice = row.find('div.item-price').contents()[4].data.trim();
+                let itemPrice = row.find('div.item-price').contents()[row.find('div.item-price').contents().length-1].data.trim();
+                let itemPoint = row.find('div.item-details>span.green').text().trim();
+                let itemDisPriceRate = row.find('div.item-details>span.orangered').text().trim();
+                let itemReviewCnt = row.find('div.item-details>span.gray').text().trim();
                 console.log(itemImgSrc);
                 console.log(itemTitle);
                 console.log(itemDesc);
                 console.log(itemCost);
                 console.log(itemPrice);
-
-                
-                if(i==2){
-                    console.log('종료');
-                    process.exit();
-                }
+                console.log(itemPoint);
+                console.log(itemDisPriceRate);
+                console.log(itemReviewCnt);
             }
         }
         done();
