@@ -21,13 +21,13 @@ let c = new Crawler({
                 let url = menu.attr('href');
                 if(!category || !url.includes('http')) continue;
                 console.log(i + ':' + category + ':' + url);
-                menuQue.queue({url:url,category:category});
+                res.options.que.queue({url:url,category:category});
             }
         }
         done();
     }
 });
-let menuQue = new Crawler({
+let ongari = new Crawler({
     maxConnections : 100,
     callback : async function (error, res, done) {
         let list = [];
@@ -61,11 +61,18 @@ let menuQue = new Crawler({
         done();
     }
 });
+let crawlingList = [
+    {
+        url : `http://www.ongari.com/`,
+        que:ongari
+    }
+]
 async function blogCrawling(){
     c.queueSize=1;
-    let url = `http://www.ongari.com/`;
-    url = encodeURI(url);
-    c.queue({url:url});
+    for(let item of crawlingList){
+        item.url = encodeURI(item.url);
+        c.queue(item);
+    }
 }
 
 blogCrawling();
