@@ -16,6 +16,7 @@
     "image-downloader": "^4.0.1",
     "mariadb": "^2.4.2",
     "node-cron": "^2.0.3",
-    "promise-crawler": "^0.1.0"
+    "promise-crawler": "^0.1.0",
+    "rxjs": "^6.6.3"
   }
 }

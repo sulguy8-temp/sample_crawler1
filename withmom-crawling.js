@@ -1,6 +1,7 @@
 let Crawler = require("crawler");
 let dao = require('./withmom-dao.js');
 var cron = require('node-cron');
+var si = require('./string-interceptor');
 
 let count = -1;
 

@@ -50,9 +50,26 @@ async function selectShopInfo() {
   }
   return list;
 }
+async function selectCHPList() {
+  let conn;
+  let list = [];
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query("SELECT * FROM CRAWLING_HREF_PATTERN");
+    for (let i = 0; i < rows.length; i++) {
+      list.push(rows[i]);
+    }
+  } catch (err) {
+    throw err;
+  } finally {
+    if (conn) conn.release();
+  }
+  return list;
+}
 var dao = {
   insertCrawlingInfo: insertCategoriInfo,
   selectShopInfo: selectShopInfo,
-  deleteCrawlingInfo: deleteCrawlingInfo
+  deleteCrawlingInfo: deleteCrawlingInfo,
+  selectCHPList:selectCHPList
 }
 module.exports = dao;
