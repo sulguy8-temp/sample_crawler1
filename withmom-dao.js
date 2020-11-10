@@ -1,12 +1,9 @@
 const mariadb = require('mariadb');
 const dbInfo = require('./db-info.js');
 
-
 const pool = mariadb.createPool(dbInfo);
 const insertCategoriInfoSql = "INSERT INTO CATEGORY_INFO(CAI_TYPE,CAI_DEP1) VALUES(1,?)";
 const deleteSql = "DELETE FROM crawling_info WHERE DATE_FORMAT(credat,'%Y-%m-%d') != DATE(now())";
-
-
 
 async function insertCategoriInfo(params) {
   let con;
@@ -71,5 +68,6 @@ var dao = {
   selectShopInfo: selectShopInfo,
   deleteCrawlingInfo: deleteCrawlingInfo,
   selectCHPList:selectCHPList
+  // selectCHPList:selectCHPList
 }
 module.exports = dao;

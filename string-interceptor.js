@@ -8,18 +8,32 @@ let hrefCrawler = new Crawler({
             console.log(error);
         }else{
             let $ = res.$;
-            let types = ['seller','goods','price','img']//클래스로 가능하지 않을까 고민중
+            let types = [
+                'seller',   // CHP_SELLER_PATTERN, CHP_SELLER_PATTERN_OPTION
+                'goods',    // CHP_GOODS_PATTERN, CHP_GOODS_PATTERN_OPTION
+                'price',    // CHP_PRICE_PATTERN, CHP_PRICE_PATTERN_OPTION
+                'img'       // CHP_IMG_PATTERN, CHP_IMG_PATTERN_OPTION
+            ]               // 클래스로 가능하지 않을까 고민중
             let resultObj = {};
+
             for(let type of types){
-                let typePattern = res.options[type];
-                let typePatternOpt = res.options[type+'Opt'];
-                let typePatternOptJson = JSON.parse(typePatternOpt);
+                // Type
+                let typePattern = res.options[type];    
                 let typeEle = $(typePattern);
 
+                // 우리가 정의한 strInit()으로 Custom하게 데이터 정제가능
                 var result = strInit(typeEle);
+
+                // Type Pattern
+                let typePatternOpt = res.options[type+'Opt'];
+                let typePatternOptJson = JSON.parse(typePatternOpt); 
+
+                // 패턴을 정제하는 과정
                 for(let order of typePatternOptJson){ 
                     result[order.order].call(null,order.value)
                 }
+
+                // JSON구조의 Result
                 resultObj[type] = result.build();
             }
             console.log(resultObj);
@@ -28,10 +42,12 @@ let hrefCrawler = new Crawler({
     }
 });
 
+
+// # DAO를 거친 데이터 리스트(obj) 를 받는 Function
 async function hrefCrawling(obj){
     hrefCrawler.queueSize=1;
     let param = {
-        // URL은 디비에 있는것을 바로쓰는게 아니  라 사용자가 입력하여서 요청할경우
+        // URL은 디비에 있는것을 바로쓰는게 아니라 사용자가 입력하여서 요청할경우
         // URL을 포함하고 있을때 해당 경로를 승인하는 방법으로 동작됨
         // 개발중엔 디비의 경로를 바로 사용하는것으로 세팅하고
         // 추후 개발 URL은 검증용 URL로 재정의 필요함.
@@ -48,13 +64,17 @@ async function hrefCrawling(obj){
     hrefCrawler.queue(param);
 }
 
+// DB에 저장되어있는 Option들을 파라미터(text)로 받아 데이터를 정제하는 함수
 function strInit(text) {
     var str = text;    
     return {
+        /****** 필수값 ******/
+        // CHP_IMG_PATTERN_OPTION
         src: function() {
-            str = (str[0]['attribs']['src']);
-            return this;
+            str = (str[0]['attribs']['src']);      
         },
+
+        // CHP_SELLER_PATTERN_OPTION, CHP_GOODS_PATTERN_OPTION, CHP_PRICE_PATTERN_OPTION
         text: function() {
             let result = '';
             function getChildrenData(obj){
@@ -69,21 +89,26 @@ function strInit(text) {
                 return result;
             }                    
             str = getChildrenData(str[0]);
-            return this;
+            console.log(str)
         },
+
+        /****** 문자열 편집 ******/
+        // 앞에서부터 자르기
         subStrPrefix: function(num) {
             let tmp = str.substring(0,num);            
             str = str.replace(tmp,'');
-            return this;
         },
+
+        // 뒤에서부터 자르기
         subStrSuffix: function(num) {    
             let tmp = str.substring(str.length - num,str.length);
             str = str.replace(tmp,'');
-            return this;
         },
+
+        /****** 결과, hrefCrawler()에서 객체로 사용하기 위해 추가됨 ******/
         build: function() {
             return str;
-        }
+        },
     }
 };
 
