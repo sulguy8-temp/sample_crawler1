@@ -89,7 +89,6 @@ function strInit(text) {
                 return result;
             }                    
             str = getChildrenData(str[0]);
-            console.log(str)
         },
 
         /****** 문자열 편집 ******/
