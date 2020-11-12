@@ -1,5 +1,5 @@
 let Crawler = require("crawler");
-let dao = require('./withmom-dao.js');
+let dao = require('../../config/dao-service.js');
 
 let hrefCrawler = new Crawler({
     maxConnections : 1,
@@ -36,7 +36,17 @@ let hrefCrawler = new Crawler({
                 // JSON구조의 Result
                 resultObj[type] = result.build();
             }
-            console.log(resultObj);
+            console.log("insert!")
+            let chpNum = 0;   // cphNum을 어떻게 받아야할지 모르겠습니다.
+            let chiUrl = res.options['url'];
+            let chiSeller = resultObj['seller'];
+            let chiGoods = resultObj['goods'];
+            let chiPrice = resultObj['price'].replace(/[^0-9]/g, '');
+            let chiImgName = resultObj['img'];
+            let active = 0;   // active 초기값???
+
+            let params = [chpNum, chiUrl, chiSeller, chiGoods, chiPrice, chiImgName, active]
+            await dao.insertCHI(params);      
         }
         done();
     }
@@ -112,13 +122,16 @@ function strInit(text) {
 };
 
 async function init(){
-    console.log('start : ' + new Date());
-    count = 0;
-    let list = await dao.selectCHPList();
-    list.forEach(async (item)=>{
-        hrefCrawling(item);
-    });
-    // await dao.deleteCrawlingInfo();
+
+    let csp = await dao.test();
+    console.log(csp)
+
+    // console.log('start : ' + new Date());
+    // count = 0;
+    // let list = await dao.selectCHPList();
+    // list.forEach(async (item)=>{
+    //     hrefCrawling(item);
+    // });
 }
 
 var si = {
